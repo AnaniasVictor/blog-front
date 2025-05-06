@@ -3,6 +3,7 @@ import 'package:routefly/routefly.dart';
 import 'screens/login_screen.dart';
 import 'screens/cadastro_screen.dart';
 import 'screens/cadastro_post_screen.dart';
+import 'screens/listagem_post_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/cadastro': (context) => const CadastroScreen(),
         '/posts': (context) => const CadastroPostScreen(),
+        '/listaposts': (context) => ListagemPostsScreen()
       },
       initialRoute: '/login',
     );

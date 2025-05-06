@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/post_service.dart';
 
 class CadastroPostScreen extends StatefulWidget {
   const CadastroPostScreen({super.key});
@@ -9,41 +10,60 @@ class CadastroPostScreen extends StatefulWidget {
 
 class _CadastroPostScreenState extends State<CadastroPostScreen> {
   final _formKey = GlobalKey<FormState>();
+  final PostService _postService = PostService();
   String _titulo = '';
   String _conteudo = '';
   String? _toastMessage;
   bool _isSuccess = true;
+  bool _isLoading = false;
 
-  void _submitPost() {
+  Future<void> _submitPost() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
-    // Simulação de postagem com sucesso
-    // Aqui você pode fazer a chamada à API para criar o post
-    setState(() {
-      _toastMessage = 'Post criado com sucesso!';
-      _isSuccess = true;
-    });
+    setState(() => _isLoading = true);
 
-    Future.delayed(const Duration(seconds: 3), () {
-      setState(() => _toastMessage = null);
-    });
-
-    // Após a criação do post, você pode limpar o formulário
-    _formKey.currentState!.reset();
+    try {
+      await _postService.criarPost(_titulo, _conteudo);
+      setState(() {
+        _toastMessage = 'Post criado com sucesso!';
+        _isSuccess = true;
+        _formKey.currentState!.reset();
+      });
+    } catch (e) {
+      setState(() {
+        _toastMessage = 'Erro ao criar post';
+        _isSuccess = false;
+      });
+    } finally {
+      setState(() => _isLoading = false);
+      Future.delayed(const Duration(seconds: 3), () {
+        setState(() => _toastMessage = null);
+      });
+    }
   }
 
-  void _corrigirOrtografia() {
-    // Simulando correção ortográfica
-    setState(() {
-      _conteudo = _conteudo.replaceAll('errro', 'erro'); // Exemplo simples
-      _toastMessage = 'Ortografia corrigida com sucesso!';
-      _isSuccess = true;
-    });
+  Future<void> _corrigirOrtografia() async {
+    setState(() => _isLoading = true);
 
-    Future.delayed(const Duration(seconds: 3), () {
-      setState(() => _toastMessage = null);
-    });
+    try {
+      final textoCorrigido = await _postService.corrigirOrtografia(_conteudo);
+      setState(() {
+        _conteudo = textoCorrigido;
+        _toastMessage = 'Ortografia corrigida com sucesso!';
+        _isSuccess = true;
+      });
+    } catch (e) {
+      setState(() {
+        _toastMessage = 'Erro ao corrigir ortografia';
+        _isSuccess = false;
+      });
+    } finally {
+      setState(() => _isLoading = false);
+      Future.delayed(const Duration(seconds: 3), () {
+        setState(() => _toastMessage = null);
+      });
+    }
   }
 
   @override
@@ -55,7 +75,6 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              // Aqui você pode limpar o armazenamento local ou fazer logout
               Navigator.pushReplacementNamed(context, '/login');
             },
           ),
@@ -65,6 +84,7 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            if (_isLoading) const LinearProgressIndicator(),
             Form(
               key: _formKey,
               child: Column(
@@ -84,6 +104,7 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    initialValue: _conteudo,
                     decoration: const InputDecoration(
                       labelText: 'Conteúdo',
                       border: OutlineInputBorder(),
@@ -96,23 +117,20 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
                       return null;
                     },
                     onSaved: (value) => _conteudo = value ?? '',
+                    onChanged: (value) => _conteudo = value,
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: _corrigirOrtografia,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber, // Usando backgroundColor ao invés de primary
-                        ),
+                        onPressed: _isLoading ? null : _corrigirOrtografia,
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
                         child: const Text('Corrigir Ortografia'),
                       ),
                       ElevatedButton(
-                        onPressed: _submitPost,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green, // Usando backgroundColor ao invés de primary
-                        ),
+                        onPressed: _isLoading ? null : _submitPost,
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                         child: const Text('Salvar Post'),
                       ),
                     ],
@@ -123,11 +141,9 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/posts');
+                Navigator.pushNamed(context, '/listaposts');
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Usando backgroundColor ao invés de primary
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
               child: const Text('Ver Posts'),
             ),
             if (_toastMessage != null)

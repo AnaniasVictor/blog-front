@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:routefly/routefly.dart';
-import '../services/auth_service.dart'; // Serviço de cadastro
-import '../widgets/toast_widget.dart'; // Widget para mostrar mensagens de erro ou sucesso
+import '../services/auth_service.dart';
+import '../widgets/toast_widget.dart';
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
@@ -26,7 +26,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     final response = await AuthService.cadastrar(_nome, _email, _senha, _descricao);
 
     if (response != null) {
-      Routefly.push('/login'); // Redireciona para o login após cadastro
+      Navigator.pushNamed(context, '/login');
     } else {
       setState(() {
         _toastMessage = 'Erro ao cadastrar usuário';
@@ -95,6 +95,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     ),
                     if (_toastMessage != null)
                       ToastWidget(message: _toastMessage!, isSuccess: _isSuccess),
+
                   ],
                 ),
               ),

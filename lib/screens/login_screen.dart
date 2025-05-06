@@ -16,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _toastMessage;
   bool _isSuccess = true;
 
-  // Função de login
   void _login() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
@@ -24,8 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final response = await AuthService.login(_email, _senha);
 
     if (response != null) {
-      // Navega para a tela de cadastro de posts usando o Navigator.pushNamed
-      Navigator.pushNamed(context, '/posts');  // Corrigido para a navegação com o nome da rota
+      Navigator.pushNamed(context, '/posts');
     } else {
       setState(() {
         _toastMessage = 'Usuário ou senha inválidos';
@@ -37,9 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Função de navegação para a tela de cadastro
   void _navegarParaCadastro() {
-    Navigator.pushNamed(context, '/cadastro');  // Roteia para a tela de cadastro
+    Navigator.pushNamed(context, '/cadastro');
   }
 
   @override
@@ -82,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Text('Entrar'),
                     ),
                     const SizedBox(height: 12),
-                    // Botão para redirecionar para a tela de cadastro
                     TextButton(
                       onPressed: _navegarParaCadastro,
                       child: const Text('Não tem uma conta? Cadastre-se', style: TextStyle(fontSize: 16)),
