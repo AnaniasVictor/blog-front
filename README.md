@@ -1,16 +1,51 @@
-# project
+# Projeto de Programação Mobile
 
-A new Flutter project.
+Este projeto foi desenvolvido para a Disciplina "Programação para Dispositivos Móveis" da 
+**Universidade Estadual de Goiás - UEG**.
 
-## Getting Started
+## Descrição
 
-This project is a starting point for a Flutter application.
+O projeto consiste em um **blog** criado com **Flutter**, onde os usuários podem:
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+* **Cadastrar-se** no sistema.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* **Criar**, **editar e deletar posts**.
+
+* **Visualizar posts de outros usuários**.
+
+* **Ouvir áudios gerados a partir do conteúdo do post**.
+
+* **Utilizar a correção ortográfica automática ao criar posts**.
+
+O backend da aplicação foi gerado com **OpenAPI-Generator**, utilizando como referência o back-end desenvolvido em disciplinas anteriores.
+
+## Funcionalidades
+
+* **Cadastro de Usuário**: Permite que novos usuários se cadastrem no blog, com campos para nome, e-mail, senha e uma breve descrição.
+
+* **Cadastro e Exibição de Posts**: Usuários cadastrados podem criar novos posts, visualizar os posts de outros usuários e deletar seus próprios posts.
+
+* **Geração de Áudio**: A cada post criado, o sistema pode gerar e tocar um áudio a partir do conteúdo do post.
+
+* **Correção Ortográfica**: Ao criar um post, o usuário tem a opção de ativar a correção ortográfica automática, que verifica e sugere correções de palavras.
+
+## Tecnologias Utilizadas
+
+* **Flutter**: Framework principal para o desenvolvimento da aplicação.
+
+* **Dart**: Linguagem utilizada para o desenvolvimento em Flutter.
+
+* **AudioPlayer (audioplayers package)**: Para tocar áudio gerado a partir do conteúdo do post.
+
+* **OpenAPI-Generator**: Utilizado para gerar o back-end baseado em especificações de APIs.
+
+## Como Rodar o Projeto
+  ### Pré-requisitos:
+
+  - Flutter instalado .
+
+  - Android Studio ou outro editor compatível com Flutter.
+
+  - Emulador Android ou dispositivo físico para rodar a aplicação.
+
