@@ -11,8 +11,9 @@ class CadastroPostScreen extends StatefulWidget {
 class _CadastroPostScreenState extends State<CadastroPostScreen> {
   final _formKey = GlobalKey<FormState>();
   final PostService _postService = PostService();
+
+  final TextEditingController _conteudoController = TextEditingController();
   String _titulo = '';
-  String _conteudo = '';
   String? _toastMessage;
   bool _isSuccess = true;
   bool _isLoading = false;
@@ -24,11 +25,12 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await _postService.criarPost(_titulo, _conteudo);
+      await _postService.criarPost(_titulo, _conteudoController.text);
       setState(() {
         _toastMessage = 'Post criado com sucesso!';
         _isSuccess = true;
         _formKey.currentState!.reset();
+        _conteudoController.clear(); // limpa o conteúdo
       });
     } catch (e) {
       setState(() {
@@ -47,9 +49,8 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final textoCorrigido = await _postService.corrigirOrtografia(_conteudo);
+      await _postService.corrigirOrtografia(_conteudoController.text, _conteudoController);
       setState(() {
-        _conteudo = textoCorrigido;
         _toastMessage = 'Ortografia corrigida com sucesso!';
         _isSuccess = true;
       });
@@ -64,6 +65,12 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
         setState(() => _toastMessage = null);
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _conteudoController.dispose();
+    super.dispose();
   }
 
   @override
@@ -104,7 +111,7 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    initialValue: _conteudo,
+                    controller: _conteudoController,
                     decoration: const InputDecoration(
                       labelText: 'Conteúdo',
                       border: OutlineInputBorder(),
@@ -116,8 +123,6 @@ class _CadastroPostScreenState extends State<CadastroPostScreen> {
                       }
                       return null;
                     },
-                    onSaved: (value) => _conteudo = value ?? '',
-                    onChanged: (value) => _conteudo = value,
                   ),
                   const SizedBox(height: 20),
                   Row(

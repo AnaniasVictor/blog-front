@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
 class PostService {
   final String _baseUrl = "http://localhost:8080/api/post";
@@ -30,44 +31,27 @@ class PostService {
     final userId = prefs.getInt('usuarioId');
 
     if (userId == null) {
-      print("Usuário não logado");
       throw Exception("Usuário não logado");
     }
 
     final Map<String, dynamic> postData = {
       "titulo": titulo,
       "post": conteudo,
-      "usuario": {
-        "id": userId,
-      }
+      "usuario": {"id": userId},
     };
 
+    final response = await http.post(
+      Uri.parse(_baseUrl),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(postData),
+    );
 
-    print("Corpo da requisição: $postData");
-
-    try {
-      final response = await http.post(
-        Uri.parse(_baseUrl),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(postData),
-      );
-
-      print("Status code: ${response.statusCode}");
-      print("Resposta do servidor: ${response.body}");
-
-      if (response.statusCode != 200) {
-        throw Exception("Erro ao criar post");
-      }
-
-      print("Post criado com sucesso!");
-    } catch (e) {
-      print("Erro na requisição: $e");
+    if (response.statusCode != 200) {
       throw Exception("Erro ao criar post");
     }
   }
 
-
-  Future<String> corrigirOrtografia(String texto) async {
+  Future<void> corrigirOrtografia(String texto, TextEditingController controller) async {
     final response = await http.post(
       Uri.parse("$_baseUrl/ortografia"),
       headers: {"Content-Type": "application/json"},
@@ -75,7 +59,7 @@ class PostService {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      controller.text = response.body;
     } else {
       throw Exception("Erro ao corrigir ortografia");
     }
